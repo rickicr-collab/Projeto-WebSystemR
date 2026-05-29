@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import br.com.rickicr_collab.WebSystemR.dto.usuario.UsuarioRequestDTO;
+import br.com.rickicr_collab.WebSystemR.dto.usuario.UsuarioResponseDTO;
 import br.com.rickicr_collab.WebSystemR.entity.Usuario;
 import br.com.rickicr_collab.WebSystemR.repository.UsuarioRepository;
 
@@ -17,17 +19,20 @@ public class UsuarioService {
     }
 
     // metodo Lista Usuarios
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
+    public List<UsuarioResponseDTO> listarUsuarios() {
+        return usuarioRepository.findAll().stream().map(this::converterParaDTO).toList();
     }
 
-    //Metodo Buscar Por Id
-    public Usuario buscarPorId(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario não Encontrado"));
+    // Metodo Buscar Por Id
+    public UsuarioResponseDTO buscarPorId(Long id) {
+        var usuarioBuscado = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario não Encontrado"));
+        return converterParaDTO(usuarioBuscado);
     }
 
     // Metodo criar Usuario
-    public Usuario criarUsuario(Usuario usuario) {
+    public UsuarioResponseDTO criarUsuario(UsuarioRequestDTO dto) {
+        Usuario usuario = converterParaEntidade(dto);
         if (usuarioRepository.existsByLogin(usuario.getLogin())) {
             throw new RuntimeException("Login já cadastrado!");
         }
@@ -35,16 +40,40 @@ public class UsuarioService {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new RuntimeException("Email já cadastrado!");
         }
-        return usuarioRepository.save(usuario);
+        Usuario usuarioCriado = usuarioRepository.save(usuario);
+        return converterParaDTO(usuarioCriado);
     }
 
     // Metodo deletar Usuario
-    public void deletarUsuario(long id) {
+    public void deletarUsuario(Long id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);
         } else {
             throw new RuntimeException("Usuario não Encontrado com " + id + " informado!");
         }
+    }
+
+    // Conversor para Entidade
+    private Usuario converterParaEntidade(UsuarioRequestDTO dto) {
+        Usuario usuario = new Usuario();
+        usuario.setNomeCompleto(dto.nomeCompleto());
+        usuario.setLogin(dto.login());
+        usuario.setEmail(dto.email());
+        usuario.setSenha(dto.senha());
+        usuario.setTelefone(dto.telefone());
+        usuario.setPerfil(dto.perfil());
+        return usuario;
+    }
+    
+    // Conversor Para DTO
+    private UsuarioResponseDTO converterParaDTO(Usuario usuario) {
+        return new UsuarioResponseDTO(
+                usuario.getId(),
+                usuario.getNomeCompleto(),
+                usuario.getLogin(),
+                usuario.getEmail(),
+                usuario.getTelefone(),
+                usuario.getPerfil());
     }
 
 }
