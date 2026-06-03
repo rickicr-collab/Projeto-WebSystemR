@@ -47,12 +47,25 @@ public class UsuarioService {
         return converterParaDTO(usuarioCriado);
     }
 
+    // Metodo atualizar Usuario
+    public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO dto){
+        Usuario usuarioAtualizado = usuarioRepository.findById(id).orElseThrow(() -> new UsuarioNaoEncontradoException(
+            "Usuario não foi encontrado com o id" + id + " informado!"));
+        usuarioAtualizado.setNomeCompleto(dto.nomeCompleto());
+        usuarioAtualizado.setLogin(dto.login());
+        usuarioAtualizado.setEmail(dto.email());
+        usuarioAtualizado.setTelefone(dto.telefone());
+        usuarioAtualizado.setPerfil(dto.perfil());
+        Usuario usuarioSalvo = usuarioRepository.save(usuarioAtualizado);
+        return converterParaDTO(usuarioSalvo);
+    }
+
     // Metodo deletar Usuario
     public void deletarUsuario(Long id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);
         } else {
-            throw new UsuarioNaoEncontradoException("Usuario não Encontrado com " + id + " informado!");
+            throw new UsuarioNaoEncontradoException("Usuario não Encontrado com id: " + id + " informado!");
         }
     }
 
