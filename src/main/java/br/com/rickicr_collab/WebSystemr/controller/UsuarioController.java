@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.rickicr_collab.WebSystemR.dto.usuario.UsuarioRequestDTO;
 import br.com.rickicr_collab.WebSystemR.dto.usuario.UsuarioResponseDTO;
 import br.com.rickicr_collab.WebSystemR.service.UsuarioService;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -42,14 +43,14 @@ public class UsuarioController {
 
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> criarUsuario(@RequestBody UsuarioRequestDTO usuarioRequestDTO){
+    public ResponseEntity<UsuarioResponseDTO> criarUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioRequestDTO){
         UsuarioResponseDTO criarUsuario = usuarioService.criarUsuario(usuarioRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(criarUsuario);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable Long id, @RequestBody UsuarioRequestDTO dto){
+    public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@Valid @PathVariable Long id, @RequestBody UsuarioRequestDTO dto){
         UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarUsuario(id, dto);
         return ResponseEntity.ok(usuarioAtualizado);
     }
