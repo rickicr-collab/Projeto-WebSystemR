@@ -1,6 +1,7 @@
 package br.com.rickicr_collab.WebSystemR.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,11 @@ public class UsuarioService {
         var usuarioBuscado = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario não Encontrado"));
         return converterParaDTO(usuarioBuscado);
+    }
+
+    //Motodo buscar por login
+    public Optional<Usuario> buscarPorLogin(String login){
+        return usuarioRepository.findByLogin(login);
     }
 
     // Metodo criar Usuario
