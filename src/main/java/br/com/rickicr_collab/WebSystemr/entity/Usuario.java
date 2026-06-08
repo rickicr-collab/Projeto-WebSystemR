@@ -1,5 +1,12 @@
 package br.com.rickicr_collab.WebSystemR.entity;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import br.com.rickicr_collab.WebSystemR.enums.Perfil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +29,7 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,5 +56,20 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Perfil perfil;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + perfil.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
 
 }
