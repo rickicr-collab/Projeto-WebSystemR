@@ -3,6 +3,7 @@ package br.com.rickicr_collab.WebSystemR.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.rickicr_collab.WebSystemR.dto.usuario.UsuarioRequestDTO;
@@ -18,8 +19,11 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // metodo Lista Usuarios
@@ -81,7 +85,7 @@ public class UsuarioService {
         usuario.setNomeCompleto(dto.nomeCompleto());
         usuario.setLogin(dto.login());
         usuario.setEmail(dto.email());
-        usuario.setSenha(dto.senha());
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setTelefone(dto.telefone());
         usuario.setPerfil(dto.perfil());
         return usuario;
